@@ -1,0 +1,48 @@
+apiVersion: v1
+items:
+# - apiVersion: v1
+#   kind: ImageStream
+#   metadata:
+#     labels:
+#       app: insights-ocp-controller
+#     name: centos
+#   spec:
+#     tags:
+#     - from:
+#         kind: DockerImage
+#         name: centos:centos7
+#       name: centos7
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-controller
+    name: insights-ocp-controller
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: insights-ocp-controller
+    name: insights-ocp-controller
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: insights-ocp-controller:latest
+    source:
+      git:
+        uri: https://github.com/RedHatInsights/insights-ocp-controller
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: centos:centos7
+      type: Docker
+    triggers:
+    - github:
+        secret: rBS2624o_cEq47uIpXh_
+      type: GitHub
+    - type: ConfigChange
+kind: List
+metadata: {}

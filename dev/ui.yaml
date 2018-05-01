@@ -1,0 +1,113 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-ui
+    name: insights-ocp-ui
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: insights-ocp-ui
+    name: insights-ocp-ui
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: insights-ocp-ui:latest
+    source:
+      git:
+        uri: https://github.com/RedHatInsights/insights-ocp-ui
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: centos:centos7
+      type: Docker
+    triggers:
+    - github:
+        secret: oBExuB59iPZ-v1Pkno0v
+      type: GitHub
+    - type: ConfigChange
+
+# Create a proxy service account
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: proxy
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"insights-ocp-ui"}}'
+# Create a secure connection to the proxy via a route
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: insights-ocp-ui
+  spec:
+    to:
+      name: proxy
+    tls:
+      termination: Reencrypt
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: proxy
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
+  spec:
+    ports:
+    - name: proxy
+      port: 443
+      targetPort: 8443
+    selector:
+      app: insights-ocp-ui
+# Launch a insights-ocp-ui as a sidecar
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: insights-ocp-ui
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: insights-ocp-ui
+    template:
+      metadata:
+        labels:
+          app: insights-ocp-ui
+      spec:
+        serviceAccountName: proxy
+        containers:
+        - name: oauth-proxy
+          image: registry.access.redhat.com/openshift3/oauth-proxy
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 8443
+            name: public
+          args:
+          - --https-address=:8443
+          - --provider=openshift
+          - --openshift-service-account=proxy
+          - --upstream=http://localhost:8080
+          - --pass-access-token
+          - --tls-cert=/etc/tls/private/tls.crt
+          - --tls-key=/etc/tls/private/tls.key
+          - --cookie-secret=SECRETSECRETSECRETSE
+          volumeMounts:
+          - mountPath: /etc/tls/private
+            name: proxy-tls
+        - image: docker-registry.default.svc:5000/insights-scan/insights-ocp-ui:latest
+          name: insights-ocp-ui
+          ports:
+          - containerPort: 8080
+          env:
+          - name: BIGZAM_API
+            value: insights-ocp-api:8080
+        volumes:
+        - name: proxy-tls
+          secret:
+            secretName: proxy-tls
+kind: List
+metadata: {}
