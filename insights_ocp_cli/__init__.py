@@ -56,7 +56,9 @@ def install(args):
         'oc create secret generic insights-controller-credentials'
         ' --from-literal=username=' + args.user +
         ' --from-literal=password=' + args.password +
-        ' --from-literal=scanapi=insights-ocp-api:8080')
+        ' --from-literal=proxy=' + args.proxy +
+        ' --from-literal=limit=' + args.limit +
+        ' --from-literal=scanapi=' + args.scan_api)
 
     dir_ = 'prod/'
     if args.dev:
@@ -65,12 +67,13 @@ def install(args):
     print('Creating Insights OCP API...')
     run_cmd('oc create -f' + path.join(dir_, 'api.yaml'))
     run_cmd('oc set env --from secret/insights-ocp-db --prefix=MYSQL_ dc/insights-ocp-api')
+    run_cmd('oc set env dc/insights-ocp-api CONCURRENT_SCAN_LIMIT='args.limit)
     print('Creating Insights OCP UI...')
     run_cmd('oc create -f' + path.join(dir_, 'ui.yaml'))
-    print('Creating Insights OCP scanner...')
-    run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
     print('Creating Insights OCP controller...')
     run_cmd('oc create -f' + path.join(dir_, 'controller.yaml'))
+    print('Creating Insights OCP scanner sets...')
+    run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
     print('Done!')
 
 
@@ -84,10 +87,12 @@ def uninstall(_):
 
 
 def start_scan(_):
+    # run some oc command to start the 😈 set
     pass
 
 
 def stop_scan(_):
+    # run some oc command to stop the 😈 set
     pass
 
 
@@ -102,7 +107,7 @@ def get_args():
         'uninstall',
         help='Uninstall the Red Hat Insights OCP project')
     start_p = subparsers.add_parser(
-        'start-scan',
+        'start-scan', # maybe `enable-scan` ?
         help='Enable scanning')
     stop_p = subparsers.add_parser(
         'stop-scan',
@@ -116,6 +121,23 @@ def get_args():
         '--password', '-p',
         help='Red Hat Customer Portal password',
         required=True)
+    install_p.add_argument(
+        '--proxy',
+        action='store',
+        help='Proxy for Insights Client uploads.',
+        default='')
+    install_p.add_argument(
+        '--limit',
+        action='store',
+        help='Number of scans to run concurrently.',
+        default=2)
+
+    # TODO: this should be queried from inside the controller instead
+    install_p.add_argument(
+        '--scan-api',
+        action='store',
+        help='Internal route to Insights OCP scan API.',
+        default='insights-ocp-api:8080')
     install_p.add_argument(
         '--dev',
         action='store_true',
