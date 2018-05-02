@@ -18,6 +18,7 @@ setup(
     ]},
     data_files=[('/etc/insights-ocp-cli',
                 ['prod/api.yaml',
+                 'prod/ui.yaml',
                  'prod/controller.yaml',
                  'prod/scanner.yaml',
                  'prod/scan-job.yaml'])])
