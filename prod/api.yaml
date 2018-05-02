@@ -1,0 +1,73 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-api
+    name: insights-ocp-api
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: docker.io/rexwhite/insights-ocp-api
+#      importPolicy:
+#        scheduled: true
+      name: latest
+      referencePolicy:
+        type: Source
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: insights-ocp-api
+    name: insights-ocp-api
+  spec:
+    replicas: 1
+    selector:
+      app: insights-ocp-api
+      deploymentconfig: insights-ocp-api
+    template:
+      metadata:
+        labels:
+          app: insights-ocp-api
+          deploymentconfig: insights-ocp-api
+      spec:
+        containers:
+        - image: docker.io/rexwhite/insights-ocp-api:latest
+          name: insights-ocp-api
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          env:
+          - name: MYSQL_HOST
+            value: insights-ocp-db
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - insights-ocp-api
+        from:
+          kind: ImageStreamTag
+          name: insights-ocp-api:latest
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: insights-ocp-api
+    name: insights-ocp-api
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: insights-ocp-api
+      deploymentconfig: insights-ocp-api
+kind: List
+metadata: {}
