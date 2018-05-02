@@ -76,6 +76,9 @@ def install(args):
     run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
     print('Done!')
 
+    # enable scanning immediately after install
+    start_scan()
+
 
 def uninstall(_):
     delete_project()
