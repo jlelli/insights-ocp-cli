@@ -20,5 +20,4 @@ setup(
                 ['prod/api.yaml',
                  'prod/ui.yaml',
                  'prod/controller.yaml',
-                 'prod/scanner.yaml',
-                 'prod/scan-job.yaml'])])
+                 'prod/scanner.yaml'])])

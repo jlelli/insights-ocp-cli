@@ -36,7 +36,6 @@ Insights scan controller for Openshift Container Platform.
 /etc/insights-ocp-cli/ui.yaml
 /etc/insights-ocp-cli/controller.yaml
 /etc/insights-ocp-cli/scanner.yaml
-/etc/insights-ocp-cli/scan-job.yaml
 
 %changelog
 * Wed May 2 2018 Jeremy Crafts <jcrafts@redhat.com> - 0.0.1-0.alpha1
