@@ -38,7 +38,12 @@ def install(args):
 
     print('Creating database...')
     run_cmd('oc new-project insights-scan')
-    run_cmd('oc import-image centos:centos7 --from registry.hub.docker.com/library/centos --confirm', False)
+
+    run_cmd('oc import-image insights-ocp-api:latest --from registry.access.redhat.com/insights-tech-preview --confirm', False)
+    run_cmd('oc import-image insights-ocp-ui:latest --from registry.access.redhat.com/insights-tech-preview --confirm', False)
+    run_cmd('oc import-image insights-ocp-scanner:latest --from registry.access.redhat.com/insights-tech-preview --confirm', False)
+    run_cmd('oc import-image insights-ocp-controller:latest --from registry.access.redhat.com/insights-tech-preview --confirm', False)
+
     run_cmd(
         'oc create secret generic insights-ocp-db'
         ' --from-literal=DATABASE=insights' +
