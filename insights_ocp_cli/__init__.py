@@ -7,6 +7,8 @@ import random
 import string
 from os import path
 
+CONF_DIR = '/etc/insights-ocp-cli'
+
 
 def rando():
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(16)])
@@ -60,24 +62,20 @@ def install(args):
         ' --from-literal=limit=' + args.limit +
         ' --from-literal=scanapi=' + args.scan_api)
 
-    dir_ = 'prod/'
-    if args.dev:
-        dir_ = 'dev/'
+    dir_ = args.dev or CONF_DIR
 
     print('Creating Insights OCP API...')
     run_cmd('oc create -f' + path.join(dir_, 'api.yaml'))
     run_cmd('oc set env --from secret/insights-ocp-db --prefix=MYSQL_ dc/insights-ocp-api')
-    run_cmd('oc set env dc/insights-ocp-api CONCURRENT_SCAN_LIMIT='args.limit)
+    run_cmd('oc set env dc/insights-ocp-api CONCURRENT_SCAN_LIMIT=' + args.limit)
     print('Creating Insights OCP UI...')
     run_cmd('oc create -f' + path.join(dir_, 'ui.yaml'))
     print('Creating Insights OCP controller...')
     run_cmd('oc create -f' + path.join(dir_, 'controller.yaml'))
-    print('Creating Insights OCP scanner sets...')
-    run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
-    print('Done!')
+    print('Install finished.')
 
     # enable scanning immediately after install
-    start_scan()
+    start_scan(args)
 
 
 def uninstall(_):
@@ -89,14 +87,16 @@ def uninstall(_):
     sys.exit()
 
 
-def start_scan(_):
-    # run some oc command to start the 😈 set
-    pass
+def start_scan(args):
+    dir_ = args.dev or CONF_DIR
+    # TODO: make daemonset in scanner.yaml its own file. open it here
+    print('Creating Insights OCP scanner sets...')
+    run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
 
 
 def stop_scan(_):
-    # run some oc command to stop the 😈 set
-    pass
+    print('Stopping scans...')
+    run_cmd('oc delete ds insights-scanner')
 
 
 def get_args():
@@ -113,7 +113,7 @@ def get_args():
         'start-scan', # maybe `enable-scan` ?
         help='Enable scanning')
     stop_p = subparsers.add_parser(
-        'stop-scan',
+        'stop-scan', # `disable-scan` ?
         help='Disable scanning')
 
     install_p.add_argument(
@@ -133,19 +133,20 @@ def get_args():
         '--limit',
         action='store',
         help='Number of scans to run concurrently.',
-        default=2)
+        default='2')
 
     # TODO: this should be queried from inside the controller instead
     install_p.add_argument(
         '--scan-api',
         action='store',
         help='Internal route to Insights OCP scan API.',
+        dest='scan_api',
         default='insights-ocp-api:8080')
     install_p.add_argument(
         '--dev',
-        action='store_true',
+        action='store',
         help=argparse.SUPPRESS,
-        default=False)
+        default=None)
     install_p.set_defaults(func=install)
 
     uninstall_p.set_defaults(func=uninstall)
