@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 SHORT_DESC = 'Red Hat Insights OCP CLI'
 LONG_DESC = 'CLI for manipulating Red Hat Insights OCP'
@@ -12,11 +12,12 @@ setup(
     version='0.0.1',
     description='Red Hat Insights OCP CLI',
     long_description='CLI for manipulating Red Hat Insights OCP',
+    packages=find_packages(),
     entry_points={'console_scripts': [
-        'insights-cli = deploy:main'
+        'insights-ocp-cli = insights_ocp_cli:main'
     ]},
-    data_files=[('', ['dev/api.yaml',
-                      'dev/ui.yaml',
-                      'dev/controller.yaml',
-                      'dev/scanner.yaml',
-                      'dev/scan-job.yaml'])])
+    data_files=[('/etc/insights-ocp-cli',
+                ['prod/api.yaml',
+                 'prod/controller.yaml',
+                 'prod/scanner.yaml',
+                 'prod/scan-job.yaml'])])
