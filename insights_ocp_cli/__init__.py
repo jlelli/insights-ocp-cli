@@ -2,15 +2,15 @@ import subprocess
 import shlex
 import sys
 import argparse
-import tempfile
-import shutil
 import time
 import random
 import string
 from os import path
 
+
 def rando():
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(16)])
+
 
 def run_cmd(cmd, exit=True):
     proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -21,6 +21,7 @@ def run_cmd(cmd, exit=True):
             sys.exit(1)
     return proc.returncode
 
+
 def delete_project():
     print('Deleting Insights OCP project...')
     delete_ok = run_cmd('oc delete project insights-scan', False)
@@ -28,6 +29,7 @@ def delete_project():
         time.sleep(60)
     else:
         print('Project does not exist.')
+
 
 def install(args):
     delete_project()
@@ -71,6 +73,7 @@ def install(args):
     run_cmd('oc create -f' + path.join(dir_, 'controller.yaml'))
     print('Done!')
 
+
 def uninstall(_):
     delete_project()
     print('Removing annotations...')
@@ -79,24 +82,45 @@ def uninstall(_):
     print('Uninstall complete.')
     sys.exit()
 
+
 def start_scan(_):
     pass
 
+
 def stop_scan(_):
     pass
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='One-step deployment of insights-ocp to Openshift')
     subparsers = parser.add_subparsers()
 
-    install_p = subparsers.add_parser('install', help='Install the Red Hat Insights OCP project')
-    uninstall_p = subparsers.add_parser('uninstall', help='Uninstall the Red Hat Insights OCP project')
-    start_p = subparsers.add_parser('start-scan', help='Enable scanning')
-    stop_p = subparsers.add_parser('stop-scan', help='Disable scanning')
+    install_p = subparsers.add_parser(
+        'install',
+        help='Install the Red Hat Insights OCP project')
+    uninstall_p = subparsers.add_parser(
+        'uninstall',
+        help='Uninstall the Red Hat Insights OCP project')
+    start_p = subparsers.add_parser(
+        'start-scan',
+        help='Enable scanning')
+    stop_p = subparsers.add_parser(
+        'stop-scan',
+        help='Disable scanning')
 
-    install_p.add_argument('--user', '-u', help='Red Hat Customer Portal username', required=True)
-    install_p.add_argument('--password', '-p', help='Red Hat Customer Portal password', required=True)
-    install_p.add_argument('--dev', action='store_true', help=argparse.SUPPRESS, default=False)
+    install_p.add_argument(
+        '--user', '-u',
+        help='Red Hat Customer Portal username',
+        required=True)
+    install_p.add_argument(
+        '--password', '-p',
+        help='Red Hat Customer Portal password',
+        required=True)
+    install_p.add_argument(
+        '--dev',
+        action='store_true',
+        help=argparse.SUPPRESS,
+        default=False)
     install_p.set_defaults(func=install)
 
     uninstall_p.set_defaults(func=uninstall)
@@ -105,9 +129,11 @@ def get_args():
 
     return parser.parse_args()
 
+
 def main():
     args = get_args()
     args.func(args)
+
 
 if __name__ == '__main__':
     main()
