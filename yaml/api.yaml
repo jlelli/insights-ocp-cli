@@ -42,6 +42,26 @@ items:
           - containerPort: 8080
             protocol: TCP
           env:
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                key: DATABASE
+                name: insights-ocp-db
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: PASSWORD
+                name: insights-ocp-db
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: ROOT_PASSWORD
+                name: insights-ocp-db
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                key: USER
+                name: insights-ocp-db
           - name: MYSQL_HOST
             value: insights-ocp-db
     triggers:
