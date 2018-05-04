@@ -38,7 +38,7 @@ def install(args):
 
     print('Creating database...')
     run_cmd('oc new-project insights-scan')
-    run_cmd('oc import-image centos:centos7 --from registry.hub.docker.com/library/centos --confirm', False)
+    # run_cmd('oc import-image centos:centos7 --from registry.hub.docker.com/library/centos --confirm', False)
     run_cmd(
         'oc create secret generic insights-ocp-db'
         ' --from-literal=DATABASE=insights' +
@@ -64,12 +64,17 @@ def install(args):
 
     dir_ = args.dev or CONF_DIR
 
+    print('Creating ImageStreams...')
+    run_cmd('oc create -f' + path.join(dir_, 'imagestreams.yaml'))
+
     print('Creating Insights OCP API...')
     run_cmd('oc create -f' + path.join(dir_, 'api.yaml'))
-    run_cmd('oc set env --from secret/insights-ocp-db --prefix=MYSQL_ dc/insights-ocp-api')
+    # run_cmd('oc set env --from secret/insights-ocp-db --prefix=MYSQL_ dc/insights-ocp-api')
     run_cmd('oc set env dc/insights-ocp-api CONCURRENT_SCAN_LIMIT=' + args.limit)
+
     print('Creating Insights OCP UI...')
     run_cmd('oc create -f' + path.join(dir_, 'ui.yaml'))
+
     print('Install finished.')
 
     # enable scanning immediately after install
@@ -87,7 +92,6 @@ def uninstall(_):
 
 def start_scan(args):
     dir_ = args.dev or CONF_DIR
-    # TODO: make daemonset in scanner.yaml its own file. open it here
     print('Creating Insights OCP scanner daemon sets...')
     run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
 

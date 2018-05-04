@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-api
+    name: insights-ocp-api
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: docker.io/rexwhite/insights-ocp-api
+#      importPolicy:
+#        scheduled: true
+      name: latest
+      referencePolicy:
+        type: Local
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-ui
+    name: insights-ocp-ui
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: docker.io/rexwhite/insights-ocp-ui
+      name: latest
+      referencePolicy:
+        type: Local
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-ui
+    name: oauth-proxy
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: registry.access.redhat.com/openshift3/oauth-proxy
+      name: latest
+      referencePolicy:
+        type: Local
+#- apiVersion: v1
+#  kind: ImageStream
+#  metadata:
+#    labels:
+#      app: insights-ocp-scanner
+#    name: insights-ocp-scanner
+#  spec:
+#    lookupPolicy:
+#      local: true  # this lets us use this imagestream with a daemonset
+#    tags:
+#    - from:
+#        kind: DockerImage
+#        name: docker.io/rexwhite/insights-ocp-scanner
+#      name: latest
+#      referencePolicy:
+#        type: Source
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-controller
+    name: insights-ocp-controller
+  spec:
+    lookupPolicy:
+      local: true  # this lets us use this imagestream with a daemonset
+    tags:
+    - from:
+        kind: DockerImage
+        name: docker.io/rexwhite/insights-ocp-controller
+      name: latest
+      referencePolicy:
+        type: Local

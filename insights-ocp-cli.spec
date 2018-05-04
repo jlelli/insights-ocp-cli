@@ -32,6 +32,7 @@ Insights scan controller for Openshift Container Platform.
 %dir %{python_sitelib}/insights_ocp_cli*.egg-info
 %{python_sitelib}/insights_ocp_cli*.egg-info/*
 %{python_sitelib}/insights_ocp_cli/*.py*
+/etc/insights-ocp-cli/imagestreams.yaml
 /etc/insights-ocp-cli/api.yaml
 /etc/insights-ocp-cli/ui.yaml
 /etc/insights-ocp-cli/scanner.yaml
