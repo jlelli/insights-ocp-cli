@@ -118,6 +118,13 @@ def get_args():
         'stop-scan', # `disable-scan` ?
         help='Disable scanning')
 
+    # add --dev parameter to all sub-parsers
+    parser.add_argument(
+        '--dev',
+        action='store',
+        help=argparse.SUPPRESS,
+        default=None)
+
     install_p.add_argument(
         '--user', '-u',
         help='Red Hat Customer Portal username',
@@ -144,13 +151,8 @@ def get_args():
         help='Internal route to Insights OCP scan API.',
         dest='scan_api',
         default='insights-ocp-api:8080')
-    install_p.add_argument(
-        '--dev',
-        action='store',
-        help=argparse.SUPPRESS,
-        default=None)
-    install_p.set_defaults(func=install)
 
+    install_p.set_defaults(func=install)
     uninstall_p.set_defaults(func=uninstall)
     start_p.set_defaults(func=start_scan)
     stop_p.set_defaults(func=stop_scan)
