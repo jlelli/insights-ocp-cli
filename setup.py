@@ -17,6 +17,7 @@ setup(
         'insights-ocp-cli = insights_ocp_cli:main'
     ]},
     data_files=[('/etc/insights-ocp-cli',
-                ['yaml/api.yaml',
+                ['yaml/imagestreams.yaml',
+                 'yaml/api.yaml',
                  'yaml/ui.yaml',
                  'yaml/scanner.yaml'])])
