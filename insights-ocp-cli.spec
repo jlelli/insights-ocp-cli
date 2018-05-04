@@ -6,7 +6,7 @@
 
 Name:           insights-ocp-cli
 Version:        0.0.1
-Release:        0.alpha1%{?dist}
+Release:        1%{?dist}
 Summary:        CLI tool for interfacing with Red Hat Insights OCP project
 License:        GPL
 URL:            https://github.com/redhatinsights/insights-ocp-cli
@@ -34,9 +34,11 @@ Insights scan controller for Openshift Container Platform.
 %{python_sitelib}/insights_ocp_cli/*.py*
 /etc/insights-ocp-cli/api.yaml
 /etc/insights-ocp-cli/ui.yaml
-/etc/insights-ocp-cli/controller.yaml
 /etc/insights-ocp-cli/scanner.yaml
 
 %changelog
+* Fri May 04 2018 Lindani Phiri <lphiri@redhat.com> - 0.0.1-1
+- Initial Release
+
 * Wed May 2 2018 Jeremy Crafts <jcrafts@redhat.com> - 0.0.1-0.alpha1
 - Initial Build (Alpha)

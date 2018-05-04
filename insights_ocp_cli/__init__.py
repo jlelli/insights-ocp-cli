@@ -48,7 +48,7 @@ def install(args):
     run_cmd('oc new-app --name insights-ocp-db registry.access.redhat.com/openshift3/mysql-55-rhel7', False)
     run_cmd('oc set env --from secret/insights-ocp-db --prefix=MYSQL_ dc/insights-ocp-db')
 
-    print('Doing serviceaccount business...')
+    print('Creating serviceaccount account...')
     run_cmd('oc create serviceaccount insights-scan')
     run_cmd('oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:insights-scan:insights-scan')
     run_cmd('oc adm policy add-scc-to-user privileged system:serviceaccount:insights-scan:insights-scan')
@@ -70,8 +70,6 @@ def install(args):
     run_cmd('oc set env dc/insights-ocp-api CONCURRENT_SCAN_LIMIT=' + args.limit)
     print('Creating Insights OCP UI...')
     run_cmd('oc create -f' + path.join(dir_, 'ui.yaml'))
-    print('Creating Insights OCP controller...')
-    run_cmd('oc create -f' + path.join(dir_, 'controller.yaml'))
     print('Install finished.')
 
     # enable scanning immediately after install
@@ -90,7 +88,7 @@ def uninstall(_):
 def start_scan(args):
     dir_ = args.dev or CONF_DIR
     # TODO: make daemonset in scanner.yaml its own file. open it here
-    print('Creating Insights OCP scanner sets...')
+    print('Creating Insights OCP scanner daemon sets...')
     run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
 
 
