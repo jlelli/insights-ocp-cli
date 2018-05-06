@@ -23,16 +23,10 @@ spec:
       tolerations:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
-      initContainers:
-        - name: insights-ocp-scanner-init
-          image: docker.io/rexwhite/insights-ocp-scanner:latest
-          command: ['sh', '-c', 'true']
       containers:
         - name: insights-ocp-controller
           image: insights-ocp-controller:latest
           env:
-          - name: SCANNER_IMAGE
-            value: docker.io/rexwhite/insights-ocp-scanner:latest
           - name: SCAN_API
             valueFrom:
               secretKeyRef:
@@ -60,10 +54,19 @@ spec:
           volumeMounts:
             - name: dockersocket
               mountPath: /var/run/docker.sock
+            - name: insights-scan-dir
+              mountPath: /data/scanDir
           terminationMessagePath: /dev/termination-log
           imagePullPolicy: Always
           securityContext:
             privileged: true
+      volumes:
+        - name: insights-scan-dir
+          emptyDir: {}
+        - name: dockersocket
+          hostPath:
+            path: /var/run/docker.sock
+
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
       serviceAccountName: insights-scan
