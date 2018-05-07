@@ -80,7 +80,7 @@ items:
     tags:
     - from:
         kind: DockerImage
-        name: docker.io/rexwhite/insights-ocp-controller
+        name: docker.io/kauzalin/insights-direct
       name: latest
       referencePolicy:
         type: Local
