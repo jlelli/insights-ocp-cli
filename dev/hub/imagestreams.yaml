@@ -14,7 +14,7 @@ items:
     tags:
     - from:
         kind: DockerImage
-        name: registry.access.redhat.com/insights-tech-preview/insights-ocp-api
+        name: docker.io/rexwhite/insights-ocp-api
 #      importPolicy:
 #        scheduled: true
       name: latest
@@ -32,7 +32,7 @@ items:
     tags:
     - from:
         kind: DockerImage
-        name: registry.access.redhat.com/insights-tech-preview/insights-ocp-ui
+        name: docker.io/rexwhite/insights-ocp-ui
       name: latest
       referencePolicy:
         type: Local
@@ -64,7 +64,7 @@ items:
 #    tags:
 #    - from:
 #        kind: DockerImage
-#        name: registry.access.redhat.com/insights-tech-preview/insights-ocp-scanner
+#        name: docker.io/rexwhite/insights-ocp-scanner
 #      name: latest
 #      referencePolicy:
 #        type: Source
@@ -80,7 +80,7 @@ items:
     tags:
     - from:
         kind: DockerImage
-        name: registry.access.redhat.com/insights-tech-preview/insights-ocp-controller
+        name: docker.io/kauzalin/insights-direct
       name: latest
       referencePolicy:
         type: Local

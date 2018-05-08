@@ -50,7 +50,7 @@ spec:
           - name: INSIGHTS_AUTHMETHOD
             value: BASIC
           command:
-            - /usr/bin/insights-controller
+            - /insights-controller
           resources:
             requests:
               cpu: 50m
