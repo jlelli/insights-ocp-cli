@@ -118,9 +118,9 @@ def get_args():
         'stop-scan', # `disable-scan` ?
         help='Disable scanning')
 
-    # add --dev parameter to all sub-parsers
+    # add --conf parameter to all sub-parsers
     parser.add_argument(
-        '--dev',
+        '--conf',
         action='store',
         help=argparse.SUPPRESS,
         default=None)
