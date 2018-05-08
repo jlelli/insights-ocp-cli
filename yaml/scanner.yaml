@@ -42,6 +42,11 @@ spec:
               secretKeyRef:
                 name: insights-controller-credentials
                 key: password
+          - name: INSIGHTS_PROXY
+            valueFrom:
+              secretKeyRef:
+                name: insights-controller-credentials
+                key: proxy
           - name: INSIGHTS_AUTHMETHOD
             value: BASIC
           command:
