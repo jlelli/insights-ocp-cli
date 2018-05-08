@@ -62,7 +62,7 @@ def install(args):
         ' --from-literal=limit=' + args.limit +
         ' --from-literal=scanapi=' + args.scan_api)
 
-    dir_ = args.dev or CONF_DIR
+    dir_ = args.conf or CONF_DIR
 
     print('Creating ImageStreams...')
     run_cmd('oc create -f' + path.join(dir_, 'imagestreams.yaml'))
@@ -91,7 +91,7 @@ def uninstall(_):
 
 
 def start_scan(args):
-    dir_ = args.dev or CONF_DIR
+    dir_ = args.conf or CONF_DIR
     print('Creating Insights OCP scanner daemon sets...')
     run_cmd('oc create -f' + path.join(dir_, 'scanner.yaml'))
 
@@ -121,7 +121,7 @@ def get_args():
     # add --conf parameter to all sub-parsers
     for p in [install_p, start_p]:
         p.add_argument(
-            '--conf', '-c'
+            '--conf', '-c',
             action='store',
             help=argparse.SUPPRESS,
             default=None)
