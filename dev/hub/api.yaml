@@ -20,7 +20,7 @@ items:
           deploymentconfig: insights-ocp-api
       spec:
         containers:
-        - image: registry.access.redhat.com/insights-tech-preview/insights-ocp-api:latest
+        - image: docker.io/rexwhite/insights-ocp-api:latest
           name: insights-ocp-api
           ports:
           - containerPort: 8080

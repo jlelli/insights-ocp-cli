@@ -74,7 +74,7 @@ items:
           - mountPath: /etc/tls/private
             name: proxy-tls
         - name: insights-ocp-ui
-          image: registry.access.redhat.com/insights-tech-preview/insights-ocp-ui:latest
+          image: docker.io/rexwhite/insights-ocp-ui:latest
           ports:
           - containerPort: 8080
             protocol: TCP
