@@ -119,11 +119,12 @@ def get_args():
         help='Disable scanning')
 
     # add --conf parameter to all sub-parsers
-    parser.add_argument(
-        '--conf',
-        action='store',
-        help=argparse.SUPPRESS,
-        default=None)
+    for p in [install_p, start_p]:
+        p.add_argument(
+            '--conf', '-c'
+            action='store',
+            help=argparse.SUPPRESS,
+            default=None)
 
     install_p.add_argument(
         '--user', '-u',
