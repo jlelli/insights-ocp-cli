@@ -14,7 +14,7 @@ setup(
     long_description='CLI for manipulating Red Hat Insights OCP',
     packages=find_packages(),
     entry_points={'console_scripts': [
-        'insights-ocp-cli = insights_ocp_cli:main'
+        'insights-ocp-cli = insights_ocp_cli.__main__:main'
     ]},
     data_files=[('/etc/insights-ocp-cli',
                 ['yaml/imagestreams.yaml',
