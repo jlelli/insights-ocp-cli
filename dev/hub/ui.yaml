@@ -74,7 +74,8 @@ items:
           - mountPath: /etc/tls/private
             name: proxy-tls
         - name: insights-ocp-ui
-          image: docker.io/rexwhite/insights-ocp-ui:latest
+          #image: docker.io/rexwhite/insights-ocp-ui:latest
+          image: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-ui:rhi-3.4-rhel-7-newarches-containers-candidate-20373-20180713181434
           ports:
           - containerPort: 8080
             protocol: TCP

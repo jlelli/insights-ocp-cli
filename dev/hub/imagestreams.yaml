@@ -14,10 +14,11 @@ items:
     tags:
     - from:
         kind: DockerImage
-        name: docker.io/rexwhite/insights-ocp-api
+        #name: docker.io/rexwhite/insights-ocp-api
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-api
 #      importPolicy:
 #        scheduled: true
-      name: latest
+      name: rhi-3.4-rhel-7-newarches-containers-candidate-51555-20180713181149
       referencePolicy:
         type: Local
 - apiVersion: v1
@@ -32,8 +33,9 @@ items:
     tags:
     - from:
         kind: DockerImage
-        name: docker.io/rexwhite/insights-ocp-ui
-      name: latest
+        #name: docker.io/rexwhite/insights-ocp-ui
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-ui
+      name: rhi-3.4-rhel-7-newarches-containers-candidate-20373-20180713181434
       referencePolicy:
         type: Local
 - apiVersion: v1
@@ -52,22 +54,22 @@ items:
       name: latest
       referencePolicy:
         type: Local
-#- apiVersion: v1
-#  kind: ImageStream
-#  metadata:
-#    labels:
-#      app: insights-ocp-scanner
-#    name: insights-ocp-scanner
-#  spec:
-#    lookupPolicy:
-#      local: true  # this lets us use this imagestream with a daemonset
-#    tags:
-#    - from:
-#        kind: DockerImage
-#        name: docker.io/rexwhite/insights-ocp-scanner
-#      name: latest
-#      referencePolicy:
-#        type: Source
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-scanner
+    name: insights-ocp-scanner
+  spec:
+    lookupPolicy:
+      local: true  # this lets us use this imagestream with a daemonset
+    tags:
+    - from:
+        kind: DockerImage
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-scanner:rhi-3.4-rhel-7-newarches-containers-candidate-52167-20180713181339
+      name: latest
+      referencePolicy:
+        type: Source
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -80,7 +82,7 @@ items:
     tags:
     - from:
         kind: DockerImage
-        name: docker.io/kauzalin/insights-direct
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-controller:rhi-3.4-rhel-7-newarches-containers-candidate-81777-20180713181154
       name: latest
       referencePolicy:
         type: Local

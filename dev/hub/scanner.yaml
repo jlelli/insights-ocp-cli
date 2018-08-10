@@ -25,7 +25,8 @@ spec:
         effect: NoSchedule
       containers:
         - name: insights-ocp-controller
-          image: insights-ocp-controller:latest
+          #image: insights-ocp-controller:latest
+          image: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-controller:rhi-3.4-rhel-7-newarches-containers-candidate-81777-20180713181154
           env:
           - name: SCAN_API
             valueFrom:
@@ -50,7 +51,7 @@ spec:
           - name: INSIGHTS_AUTHMETHOD
             value: BASIC
           command:
-            - /insights-controller
+            - /usr/bin/insights-ocp-controller
           resources:
             requests:
               cpu: 50m

@@ -45,7 +45,8 @@ def install(args):
         ' --from-literal=PASSWORD=' + rando() +
         ' --from-literal=ROOT_PASSWORD=' + rando() +
         ' --from-literal=USER=' + rando())
-    run_cmd('oc new-app --name insights-ocp-db registry.access.redhat.com/openshift3/mysql-55-rhel7', False)
+    #run_cmd('oc new-app --name insights-ocp-db registry.access.redhat.com/openshift3/mysql-55-rhel7', False)
+    run_cmd('oc new-app --name insights-ocp-db registry.access.redhat.com/rhscl/mysql-57-rhel7', False)
     run_cmd('oc set env --from secret/insights-ocp-db --prefix=MYSQL_ dc/insights-ocp-db')
 
     print('Creating serviceaccount account...')
