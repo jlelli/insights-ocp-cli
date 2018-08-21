@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: insights-scanner
+spec:
+  selector:
+    matchLabels:
+      name: insights-scanner
+#    updateStrategy:
+#      type: RollingUpdate
+  template:
+    metadata:
+      name: insights-scanner
+      labels:
+        name: insights-scanner
+      annotations:
+        openshift.io/scc: privileged
+    spec:
+      volumes:
+        - name: dockersocket
+          hostPath:
+            path: /var/run/docker.sock
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+        - name: insights-ocp-controller
+          image: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-controller:rhi-3.4-rhel-7-newarches-containers-candidate-81777-20180713181154
+          env:
+          - name: SCAN_API
+            valueFrom:
+              secretKeyRef:
+                name: insights-controller-credentials
+                key: scanapi
+          - name: INSIGHTS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: insights-controller-credentials
+                key: username
+          - name: INSIGHTS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: insights-controller-credentials
+                key: password
+          - name: INSIGHTS_PROXY
+            valueFrom:
+              secretKeyRef:
+                name: insights-controller-credentials
+                key: proxy
+          - name: INSIGHTS_AUTHMETHOD
+            value: BASIC
+          command:
+            - /usr/bin/insights-ocp-controller
+          resources:
+            requests:
+              cpu: 50m
+            limits:
+              cpu: 500m
+          volumeMounts:
+            - name: dockersocket
+              mountPath: /var/run/docker.sock
+            - name: insights-scan-dir
+              mountPath: /data/scanDir
+          terminationMessagePath: /dev/termination-log
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+      volumes:
+        - name: insights-scan-dir
+          emptyDir: {}
+        - name: dockersocket
+          hostPath:
+            path: /var/run/docker.sock
+
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: insights-scan
+

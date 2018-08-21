@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-api
+    name: insights-ocp-api
+    spec:
+#      lookupPolicy:
+#        local: false
+      tags:
+      - from:
+          kind: DockerImage
+          name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-api:rhi-3.4-rhel-7-newarches-containers-candidate-51555-20180713181149
+        importPolicy:
+          insecure: true
+        name: rhi-3.4-rhel-7-newarches-containers-candidate-51555-20180713181149
+        referencePolicy:
+          type: Local
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-ui
+    name: insights-ocp-ui
+  spec:
+#    lookupPolicy:
+#      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-ui:rhi-3.4-rhel-7-newarches-containers-candidate-20373-20180713181434
+      importPolicy:
+        insecure: true
+      name: rhi-3.4-rhel-7-newarches-containers-candidate-20373-20180713181434
+      referencePolicy:
+        type: Local
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-ui
+    name: oauth-proxy
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/oauth-proxy:v3.10.23-2
+      importPolicy:
+        insecure: true
+      name: v3.10.23-2
+      referencePolicy:
+        type: Local
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-scanner
+    name: insights-ocp-scanner
+  spec:
+    lookupPolicy:
+      local: true  # this lets us use this imagestream with a daemonset
+    tags:
+    - from:
+        kind: DockerImage
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-scanner:rhi-3.4-rhel-7-newarches-containers-candidate-52167-20180713181339
+      importPolicy:
+        insecure: true
+      name: rhi-3.4-rhel-7-newarches-containers-candidate-52167-20180713181339
+      referencePolicy:
+        type: Source
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: insights-ocp-controller
+    name: insights-ocp-controller
+  spec:
+    lookupPolicy:
+      local: true  # this lets us use this imagestream with a daemonset
+    tags:
+    - from:
+        kind: DockerImage
+        name: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-controller:rhi-3.4-rhel-7-newarches-containers-candidate-81777-20180713181154
+      importPolicy:
+        insecure: true
+      name: rhi-3.4-rhel-7-newarches-containers-candidate-81777-20180713181154
+      referencePolicy:
+        type: Local

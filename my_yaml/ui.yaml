@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+
+# Create a proxy service account
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: proxy
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"insights-ocp-ui"}}'
+
+# Create a service and secure connection to the proxy via a route
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: proxy
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
+  spec:
+    ports:
+    - name: proxy
+      port: 443
+      targetPort: 8443
+    selector:
+      app: insights-ocp-ui
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: insights-ocp-ui
+  spec:
+    to:
+      name: proxy
+    tls:
+      termination: Reencrypt
+
+# Launch insights-ocp-ui as a sidecar
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: insights-ocp-ui
+    name: insights-ocp-ui
+  spec:
+    replicas: 1
+    selector:
+      app: insights-ocp-ui
+      deploymentconfig: insights-ocp-ui
+    template:
+      metadata:
+        labels:
+          app: insights-ocp-ui
+          deploymentconfig: insights-ocp-ui
+      spec:
+        serviceAccountName: proxy
+        containers:
+        - name: oauth-proxy
+          image: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/oauth-proxy:v3.10.23-2
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 8443
+            name: public
+          args:
+          - --https-address=:8443
+          - --provider=openshift
+          - --openshift-service-account=proxy
+          - --upstream=http://localhost:8080
+          - --pass-access-token
+          - --tls-cert=/etc/tls/private/tls.crt
+          - --tls-key=/etc/tls/private/tls.key
+          - --cookie-secret=SECRETSECRETSECRETSE
+          volumeMounts:
+          - mountPath: /etc/tls/private
+            name: proxy-tls
+        - name: insights-ocp-ui
+          image: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/insights-tech-preview/insights-ocp-ui:rhi-3.4-rhel-7-newarches-containers-candidate-20373-20180713181434
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          env:
+          - name: BIGZAM_API
+            value: insights-ocp-api:8080
+        volumes:
+        - name: proxy-tls
+          secret:
+            secretName: proxy-tls
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - insights-ocp-ui
+        from:
+          kind: ImageStreamTag
+          name: insights-ocp-ui:rhi-3.4-rhel-7-newarches-containers-candidate-20373-20180713181434
+      type: ImageChange
